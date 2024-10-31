@@ -1,0 +1,22 @@
+/* src/styles/App.css */
+
+#body > * {
+  background-color: #252525;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+#body h1 {
+  text-align: center;
+  background-color: #024CAA;
+  color: white;
+  padding: .5rem 0;
+  font-size: 2em;
+  border-radius: 5px;
+  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+}
+
+#body .container {
+  max-width: 1000px;
+}

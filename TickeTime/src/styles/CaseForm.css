@@ -1,0 +1,29 @@
+/* src/styles/CaseForm.css */
+form {
+  background-color: gainsboro;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  padding: 1rem 0;
+}
+
+.containerDates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form-group {
+  margin: .5rem;
+  max-width: 20rem;
+}
+
+label {
+  font-weight: bold;
+}
+
+form button {
+  max-width: 15rem;
+}
