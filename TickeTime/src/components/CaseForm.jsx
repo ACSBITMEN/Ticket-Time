@@ -7,8 +7,17 @@ import '../styles/CaseForm.css';
 function CaseForm({ addCase }) {
   const [caseNumber, setCaseNumber] = useState('');
   const [type, setType] = useState('');
-  const [caseCreationTime, setCaseCreationTime] = useState('');
-  const [taskCreationTime, setTaskCreationTime] = useState('');
+
+  // Función para obtener la fecha y hora actual en formato compatible con datetime-local
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const localTime = new Date(now.getTime() - offset * 60 * 1000);
+    return localTime.toISOString().slice(0, 16);
+  };
+
+  const [caseCreationTime, setCaseCreationTime] = useState(getCurrentDateTime());
+  const [taskCreationTime, setTaskCreationTime] = useState(getCurrentDateTime());
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,64 +39,64 @@ function CaseForm({ addCase }) {
 
     addCase(newCase);
 
-    // Limpiar el formulario
+    // Limpiar el formulario (opcional)
     setCaseNumber('');
     setType('');
-    setCaseCreationTime('');
-    setTaskCreationTime('');
+    setCaseCreationTime(getCurrentDateTime());
+    setTaskCreationTime(getCurrentDateTime());
   };
 
   return (
-  <>
-    <form onSubmit={handleSubmit} className="">
-      <div className="containerDates">
+    <>
+      <form onSubmit={handleSubmit} className="">
+        <div className="containerDates">
 
-        <div className="form-group">
-          <label>Número de Caso</label>
-          <input
-            type="text"
-            className="form-control"
-            value={caseNumber}
-            onChange={(e) => setCaseNumber(e.target.value)}
-          />
+          <div className="form-group">
+            <label>Número de Caso</label>
+            <input
+              type="text"
+              className="form-control"
+              value={caseNumber}
+              onChange={(e) => setCaseNumber(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Tipo</label>
+            <select
+              className="form-control"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="">Selecciona el tipo</option>
+              <option value="Requerimiento">Requerimiento</option>
+              <option value="Especial">Especial</option>
+              <option value="Falla">Falla</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Hora de Creación del Caso</label>
+            <input
+              type="datetime-local"
+              className="form-control"
+              value={caseCreationTime}
+              onChange={(e) => setCaseCreationTime(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Hora de Creación de la Tarea</label>
+            <input
+              type="datetime-local"
+              className="form-control"
+              value={taskCreationTime}
+              onChange={(e) => setTaskCreationTime(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="form-group">
-          <label>Tipo</label>
-          <select
-            className="form-control"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          >
-            <option value="">Selecciona el tipo</option>
-            <option value="Requerimiento">Requerimiento</option>
-            <option value="Especial">Especial</option>
-            <option value="Falla">Falla</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Hora de Creación del Caso</label>
-          <input
-            type="datetime-local"
-            className="form-control"
-            value={caseCreationTime}
-            onChange={(e) => setCaseCreationTime(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Hora de Creación de la Tarea</label>
-          <input
-            type="datetime-local"
-            className="form-control"
-            value={taskCreationTime}
-            onChange={(e) => setTaskCreationTime(e.target.value)}
-          />
-        </div>
-      </div>
-      <button type="submit" className="btn btn-primary mt-3">
-        Agregar Caso
-      </button>
-    </form>
-  </>
+        <button type="submit" className="btn btn-primary mt-3">
+          Agregar Caso
+        </button>
+      </form>
+    </>
   );
 }
 

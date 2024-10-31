@@ -1,0 +1,71 @@
+/* src/styles/CaseItem.css */
+
+.case-item {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.case-item h5 {
+  margin: 0 2rem 0 .5rem;
+  font-size: 1.2em;
+}
+
+.case-item-date {
+  display: flex;
+  align-items: center;
+}
+
+
+.case-item .case-item-date p {
+  background-color: gainsboro;
+  font-size: .8em;
+  margin: 0.2rem 0;
+  padding: .2rem .8rem;
+  border-radius: 5px;
+}
+
+.case-item .case-item-date p:hover {
+  background-color: #c7c7c7;
+}
+
+.case-item .case-item-date p:nth-child(2) {
+  margin: 0.2rem .5rem;
+}
+
+.case-item p {
+  margin: 0.25rem 0;
+}
+
+.timers {
+  background-color: #c7c7c7;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.containerTimerDate {
+  background-color: rgb(114, 114, 114);
+  color: #f9f9f9;
+  border: 1px solid black;
+  margin: .5rem;
+}
+
+.containerTimerDate h5 {
+  font-size: 1em;
+  text-align: center;
+}
+
+.ContainerTimer {
+  display: flex;
+  flex-direction: row;
+}
+
+.ContainerTimer div {
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  padding: 0 5px;
+}
