@@ -144,7 +144,7 @@ function CaseItem({ caseData }) {
   return (
     <div className="case-item">
       <div className='case-item-date'>
-        <h5>Ticket #{caseNumber} - {type} </h5>
+        <h5>Ticket <b>#{caseNumber}</b> - {type} </h5>
         <div className='container-case-item-date'>
         <p><b>Creación Ticket:</b> {formatDateTime(caseCreationDate)}</p>
         <p><b>Creación Tarea:</b> {formatDateTime(taskCreationDate)}</p>

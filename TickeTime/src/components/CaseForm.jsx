@@ -60,7 +60,7 @@ function CaseForm({ addCase }) {
         <div className="containerDates">
 
           <div className="form-group">
-            <label>Número de Caso</label>
+            <label>Número de Ticket</label>
             <input
               type="text"
               className="form-control"
@@ -101,7 +101,7 @@ function CaseForm({ addCase }) {
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-3">
-          Agregar Caso
+          Agregar Ticket
         </button>
       </form>
     </>

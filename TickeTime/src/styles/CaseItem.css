@@ -1,9 +1,9 @@
 /* src/styles/CaseItem.css */
 
 .case-item {
-  background-color: #d6d6d6;
+  background-color: gainsboro;
   border: 1px solid #ccc;
-  padding: 0.5rem;
+  padding: .3rem .3rem 0.5rem;
   margin-bottom: 2rem;
   border-radius: 5px;
 }
@@ -12,9 +12,15 @@
   background-color: #fff;
 }
 
+.case-item:hover .containerTimerDate h5 {
+  color: #fff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
 .case-item h5 {
-  margin: 0 2rem 0 0.5rem;
+  margin: 0 2rem 0 1rem;
   font-size: 1.2em;
+  font-weight: 400;
 }
 
 .case-item-date {
@@ -43,10 +49,6 @@
 
 .case-item .case-item-date p:nth-child(2) {
   margin-right: .5rem;
-}
-
-.case-item .case-item-date p:hover {
-  background-color: #c7c7c7;
 }
 
 .case-item p {
@@ -154,6 +156,7 @@
 .statusEnd button {
   border-radius: 5px;
   height: 40px;
+  margin-right: .5rem;
 }
 
 
