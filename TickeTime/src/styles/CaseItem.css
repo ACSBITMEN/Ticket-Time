@@ -1,38 +1,52 @@
 /* src/styles/CaseItem.css */
 
 .case-item {
+  background-color: #d6d6d6;
   border: 1px solid #ccc;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f9f9f9;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
   border-radius: 5px;
 }
 
+.case-item:hover {
+  background-color: #fff;
+}
+
 .case-item h5 {
-  margin: 0 2rem 0 .5rem;
+  margin: 0 2rem 0 0.5rem;
   font-size: 1.2em;
 }
 
 .case-item-date {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 }
 
+.case-item-date .container-case-item-date {
+  display: flex;
+  flex-direction: row;
+}
 
 .case-item .case-item-date p {
   background-color: gainsboro;
-  font-size: .8em;
+  font-size: 0.9em;
   margin: 0.2rem 0;
-  padding: .2rem .8rem;
+  padding: 0.2rem 0.8rem;
   border-radius: 5px;
+}
+
+.case-item .case-item-date p:nth-child(1) {
+  margin: 0.2rem .5rem;
+}
+
+.case-item .case-item-date p:nth-child(2) {
+  margin-right: .5rem;
 }
 
 .case-item .case-item-date p:hover {
   background-color: #c7c7c7;
-}
-
-.case-item .case-item-date p:nth-child(2) {
-  margin: 0.2rem .5rem;
 }
 
 .case-item p {
@@ -40,48 +54,110 @@
 }
 
 .timers {
-  background-color: #c7c7c7;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
 .containerTimerDate {
-  background-color: rgb(114, 114, 114);
+  background-color: #727272;
   color: #f9f9f9;
   border: 1px solid black;
-  margin: .5rem;
+  margin: 0.2rem 0.5rem;
+  padding-bottom: .3rem;
   border-radius: 5px;
+  flex: 1 1 300px;
 }
 
 .containerTimerDate h5 {
+  color: #fff;
   font-size: 1em;
   text-align: center;
+  margin: 0.2rem 0;
 }
 
 .ContainerTimer {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-.ContainerTimer div {
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  padding: 0 5px;
+.ContainerTimer button {
+  border-radius: 5px;
 }
 
-.ContainerTimer div:nth-child(1) {
+.timerStatic {
   background-color: gainsboro;
-  font-size: .9em;
+  color: black;
+  font-size: 0.9em;
   min-width: 150px;
   text-align: center;
-  border-radius: 0 0 0 5px;
+  border-radius: 5px;
+  padding: 0.2rem;
+  margin: .2rem .2rem;
 }
 
-.ContainerTimer div:nth-child(2) {
+.StatusTimer {
+  display: flex;
+  align-items: center;
   font-size: 1em;
   min-width: 120px;
   text-align: center;
-  border-radius: 0 0 5px 0;
+  border-radius: 5px;
+  padding: 0.2rem;
+}
+
+.StatusTimer p {
+  width: 85%;
+  text-align: center;
+}
+
+
+.StatusTimer input[type="checkbox"] {
+  margin-left: 0.5rem;
+  width: 21px;
+  height: 21px;
+}
+
+/* Estilos para los estados */
+.StatusTimer.pending, .StatusTimer.completed, .StatusTimer.expired  {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: .1rem .5rem;
+  margin: 0 .3rem;
+}
+
+.StatusTimer.pending {
+  background-color: #f0ad4e; /* Amarillo */
+  color: black;
+}
+
+.StatusTimer.completed {
+  background-color: #5cb85c; /* Verde */
+  color: #fff;
+}
+
+.StatusTimer.expired {
+  background-color: #d9534f; /* Rojo */
+  color: #fff;
+  min-width: 165px;
+}
+
+.statusEnd {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+.statusEnd button {
+  border-radius: 5px;
+  height: 40px;
+}
+
+
+.statusEnd button:hover {
+  background-color: #d9534f;
+  color: #fff;
 }

@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className='container'>
       <h1 className="text-center">Seguimiento a Tickets</h1>
       <CaseForm addCase={addCase} />
       <CaseList cases={cases} />

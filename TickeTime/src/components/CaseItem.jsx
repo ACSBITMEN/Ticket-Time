@@ -8,6 +8,7 @@ import { format } from 'date-fns-tz';
 
 function CaseItem({ caseData }) {
   const {
+    id, // Asegúrate de que cada caso tiene un 'id' único
     caseNumber,
     type,
     caseCreationTime,
@@ -26,8 +27,24 @@ function CaseItem({ caseData }) {
     constantFollowUpTime: null,
   });
 
-    // useRef para guardar el intervalo
-    const intervalIdRef = useRef(null);
+  const [completed, setCompleted] = useState({
+    internalFollowUp: false,
+    clientFollowUp: false,
+    closingFollowUp: false,
+    caseExpiration: false,
+    constantFollowUp: false,
+  });
+
+  // useRef para guardar el intervalo
+  const intervalIdRef = useRef(null);
+
+  // Cargar el estado de 'completed' desde localStorage al montar el componente
+  useEffect(() => {
+    const savedCompleted = localStorage.getItem(`completed_${id}`);
+    if (savedCompleted) {
+      setCompleted(JSON.parse(savedCompleted));
+    }
+  }, [id]);
 
   useEffect(() => {
     const {
@@ -38,21 +55,14 @@ function CaseItem({ caseData }) {
       constantFollowUpTime,
     } = calculateFollowUpTimes(caseData);
 
-    // Agregar logs para depuración
-    console.log('internalFollowUpTime:', internalFollowUpTime);
-    console.log('clientFollowUpTime:', clientFollowUpTime);
-    console.log('closingFollowUpTime:', closingFollowUpTime);
-    console.log('caseExpirationTime:', caseExpirationTime);
-    console.log('constantFollowUpTime:', constantFollowUpTime);
-
-   // Guardamos los tiempos estáticos
+    // Guardamos los tiempos estáticos
     setStaticTimes({
-    internalFollowUpTime,
-    clientFollowUpTime,
-    closingFollowUpTime,
-    caseExpirationTime,
-    constantFollowUpTime,
-  });
+      internalFollowUpTime,
+      clientFollowUpTime,
+      closingFollowUpTime,
+      caseExpirationTime,
+      constantFollowUpTime,
+    });
 
     // Limpiar intervalo anterior si existe
     if (intervalIdRef.current) {
@@ -63,28 +73,41 @@ function CaseItem({ caseData }) {
     intervalIdRef.current = setInterval(() => {
       const now = new Date();
 
-      setTimeLeft({
-        internalFollowUp: internalFollowUpTime.getTime() - now.getTime(),
-        clientFollowUp: clientFollowUpTime.getTime() - now.getTime(),
-        closingFollowUp: closingFollowUpTime.getTime() - now.getTime(),
-        caseExpiration: caseExpirationTime.getTime() - now.getTime(),
-        constantFollowUp: constantFollowUpTime.getTime() - now.getTime(),
-      });
+      setTimeLeft((prevTimeLeft) => ({
+        internalFollowUp: completed.internalFollowUp
+          ? prevTimeLeft.internalFollowUp
+          : internalFollowUpTime.getTime() - now.getTime(),
+        clientFollowUp: completed.clientFollowUp
+          ? prevTimeLeft.clientFollowUp
+          : clientFollowUpTime.getTime() - now.getTime(),
+        closingFollowUp: completed.closingFollowUp
+          ? prevTimeLeft.closingFollowUp
+          : closingFollowUpTime.getTime() - now.getTime(),
+        caseExpiration: completed.caseExpiration
+          ? prevTimeLeft.caseExpiration
+          : caseExpirationTime.getTime() - now.getTime(),
+        constantFollowUp: completed.constantFollowUp
+          ? prevTimeLeft.constantFollowUp
+          : constantFollowUpTime.getTime() - now.getTime(),
+      }));
     }, 1000);
 
     return () => clearInterval(intervalIdRef.current);
-  }, [caseData]); // Solo depende de caseData
+  }, [caseData, completed]);
 
   // Función para formatear el tiempo restante
-  const formatTimeLeft = (milliseconds) => {
+  const formatTimeLeft = (milliseconds, isCompleted) => {
+    if (isCompleted) {
+      return 'Completado';
+    }
     if (isNaN(milliseconds) || milliseconds <= 0) {
-      return 'Tiempo cumplido';
+      return 'Tiempo vencido';
     }
     const totalMinutes = Math.floor(milliseconds / (1000 * 60));
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-  
-    return `${hours}h ${minutes}m`;
+
+    return `' ${hours}h ${minutes}m '`;
   };
 
   // Función para formatear las fechas estáticas
@@ -96,49 +119,120 @@ function CaseItem({ caseData }) {
     return format(date, 'yyyy-MM-dd HH:mm:ss', { timeZone });
   };
 
+  // Función para manejar el cambio en los checks
+  const handleCheckboxChange = (event, key) => {
+    const updatedCompleted = {
+      ...completed,
+      [key]: event.target.checked,
+    };
+    setCompleted(updatedCompleted);
+    // Guardar el estado actualizado en localStorage
+    localStorage.setItem(`completed_${id}`, JSON.stringify(updatedCompleted));
+  };
+
+  // Función para determinar la clase CSS según el estado
+  const getStatusClass = (milliseconds, isCompleted) => {
+    if (isCompleted) {
+      return 'completed';
+    } else if (milliseconds <= 0) {
+      return 'expired';
+    } else {
+      return 'pending';
+    }
+  };
+
   return (
     <div className="case-item">
       <div className='case-item-date'>
-        <h5>Caso {type} #{caseNumber}</h5>
-        <p><b>Creación Caso:</b> {formatDateTime(caseCreationDate)}</p>
+        <h5>Ticket #{caseNumber} - {type} </h5>
+        <div className='container-case-item-date'>
+        <p><b>Creación Ticket:</b> {formatDateTime(caseCreationDate)}</p>
         <p><b>Creación Tarea:</b> {formatDateTime(taskCreationDate)}</p>
+        </div>
       </div>
-      <hr />
       <div className="timers">
+        {/* Seguimiento Interno */}
         <div className="containerTimerDate">
           <h5>1er Seguimiento Tarea</h5>
           <div className="ContainerTimer">
             <div className='timerStatic'>{formatDateTime(staticTimes.internalFollowUpTime)}</div>
-            <div className='StatusTimer'>{formatTimeLeft(timeLeft.internalFollowUp)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.internalFollowUp, completed.internalFollowUp)}`}>
+              {formatTimeLeft(timeLeft.internalFollowUp, completed.internalFollowUp)}
+              <input
+                type="checkbox"
+                checked={completed.internalFollowUp}
+                onChange={(e) => handleCheckboxChange(e, 'internalFollowUp')}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Seguimiento al Cliente */}
         <div className="containerTimerDate">
           <h5>1er Avance al Cliente</h5>
           <div className="ContainerTimer">
             <div className='timerStatic'>{formatDateTime(staticTimes.clientFollowUpTime)}</div>
-            <div className='StatusTimer'>{formatTimeLeft(timeLeft.clientFollowUp)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.clientFollowUp, completed.clientFollowUp)}`}>
+              {formatTimeLeft(timeLeft.clientFollowUp, completed.clientFollowUp)}
+              <input
+                type="checkbox"
+                checked={completed.clientFollowUp}
+                onChange={(e) => handleCheckboxChange(e, 'clientFollowUp')}
+              />
+            </div>
           </div>
         </div>
-        <div className="containerTimerDate">
-          <h5>Seguimiento Constante</h5>
-          <div className="ContainerTimer">
-            <div className='timerStatic'>{formatDateTime(staticTimes.constantFollowUpTime)}</div>
-            <div className='StatusTimer'>{formatTimeLeft(timeLeft.constantFollowUp)}</div>
-          </div>
-        </div>
+
+        {/* Seguimiento de Cierre */}
         <div className="containerTimerDate">
           <h5>Seguimiento de Tarea Cierre</h5>
           <div className="ContainerTimer">
             <div className='timerStatic'>{formatDateTime(staticTimes.closingFollowUpTime)}</div>
-            <div className='StatusTimer'>{formatTimeLeft(timeLeft.closingFollowUp)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.closingFollowUp, completed.closingFollowUp)}`}>
+              {formatTimeLeft(timeLeft.closingFollowUp, completed.closingFollowUp)}
+              <input
+                type="checkbox"
+                checked={completed.closingFollowUp}
+                onChange={(e) => handleCheckboxChange(e, 'closingFollowUp')}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Seguimiento Constante */}
+        <div className="containerTimerDate">
+          <h5>Seguimiento Constante</h5>
+          <div className="ContainerTimer">
+            <div className='timerStatic'>{formatDateTime(staticTimes.constantFollowUpTime)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.constantFollowUp, completed.constantFollowUp)}`}>
+              <p>{formatTimeLeft(timeLeft.constantFollowUp, completed.constantFollowUp)}</p>
+              <input
+                type="checkbox"
+                checked={completed.constantFollowUp}
+                onChange={(e) => handleCheckboxChange(e, 'constantFollowUp')}
+              />
+            </div>
+            <button>Reiniciar</button>
+          </div>
+        </div>
+
+        {/* Vencimiento del Caso */}
         <div className="containerTimerDate">
           <h5>Vencimiento del Caso</h5>
           <div className="ContainerTimer">
             <div className='timerStatic'>{formatDateTime(staticTimes.caseExpirationTime)}</div>
-            <div className='StatusTimer'>{formatTimeLeft(timeLeft.caseExpiration)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.caseExpiration, completed.caseExpiration)}`}>
+              {formatTimeLeft(timeLeft.caseExpiration, completed.caseExpiration)}
+              <input
+                type="checkbox"
+                checked={completed.caseExpiration}
+                onChange={(e) => handleCheckboxChange(e, 'caseExpiration')}
+              />
+            </div>
           </div>
+        </div>
+        <div className='statusEnd'>
+          <button>Borrar</button>
         </div>
       </div>
     </div>
@@ -147,11 +241,11 @@ function CaseItem({ caseData }) {
 
 CaseItem.propTypes = {
   caseData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired, // Asegúrate de que 'id' es requerido y único
     caseNumber: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    caseCreationTime: PropTypes.number.isRequired, // Cambiado a number
-    taskCreationTime: PropTypes.number.isRequired, // Cambiado a number
+    caseCreationTime: PropTypes.number.isRequired,
+    taskCreationTime: PropTypes.number.isRequired,
   }).isRequired,
 };
 

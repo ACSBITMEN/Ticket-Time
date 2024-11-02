@@ -1,11 +1,13 @@
 /* src/styles/CaseForm.css */
 form {
-  background-color: gainsboro;
+  background-color: rgb(70, 70, 70);
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
+  border: 1px solid rgb(153, 153, 153);
   padding: 1rem 0;
 }
 
