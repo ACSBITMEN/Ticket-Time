@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseForm.css';
+import { parse } from 'date-fns';
 
 function CaseForm({ addCase }) {
   const [caseNumber, setCaseNumber] = useState('');
@@ -28,12 +29,19 @@ function CaseForm({ addCase }) {
       return;
     }
 
+    // Formato de fecha esperado
+    const dateFormat = "yyyy-MM-dd'T'HH:mm";
+
+    // Convertir las fechas ingresadas a objetos Date interpretados como hora local
+    const caseCreationDate = parse(caseCreationTime, dateFormat, new Date());
+    const taskCreationDate = parse(taskCreationTime, dateFormat, new Date());
+
     const newCase = {
       id: Date.now(),
       caseNumber,
       type,
-      caseCreationTime,
-      taskCreationTime,
+      caseCreationTime: caseCreationDate.getTime(),
+      taskCreationTime: taskCreationDate.getTime(),
       // Aquí puedes añadir más propiedades necesarias
     };
 
