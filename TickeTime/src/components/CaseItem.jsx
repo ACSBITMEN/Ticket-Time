@@ -1,6 +1,6 @@
 // src/components/CaseItem.jsx
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseItem.css';
 import { calculateFollowUpTimes } from '../utils/timeCalculations';
@@ -25,6 +25,9 @@ function CaseItem({ caseData }) {
     caseExpirationTime: null,
     constantFollowUpTime: null,
   });
+
+    // useRef para guardar el intervalo
+    const intervalIdRef = useRef(null);
 
   useEffect(() => {
     const {
@@ -51,29 +54,26 @@ function CaseItem({ caseData }) {
     constantFollowUpTime,
   });
 
-  const intervalId = setInterval(() => {
-    const now = new Date();
-  
-    if (
-      staticTimes.internalFollowUpTime &&
-      staticTimes.clientFollowUpTime &&
-      staticTimes.closingFollowUpTime &&
-      staticTimes.caseExpirationTime &&
-      staticTimes.constantFollowUpTime
-    ) {
-      setTimeLeft({
-        internalFollowUp: staticTimes.internalFollowUpTime.getTime() - now.getTime(),
-        clientFollowUp: staticTimes.clientFollowUpTime.getTime() - now.getTime(),
-        closingFollowUp: staticTimes.closingFollowUpTime.getTime() - now.getTime(),
-        caseExpiration: staticTimes.caseExpirationTime.getTime() - now.getTime(),
-        constantFollowUp: staticTimes.constantFollowUpTime.getTime() - now.getTime(),
-      });
+    // Limpiar intervalo anterior si existe
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
     }
-  }, 1000);
-  
 
-    return () => clearInterval(intervalId);
-  }, [caseData]);
+    // Iniciar el intervalo
+    intervalIdRef.current = setInterval(() => {
+      const now = new Date();
+
+      setTimeLeft({
+        internalFollowUp: internalFollowUpTime.getTime() - now.getTime(),
+        clientFollowUp: clientFollowUpTime.getTime() - now.getTime(),
+        closingFollowUp: closingFollowUpTime.getTime() - now.getTime(),
+        caseExpiration: caseExpirationTime.getTime() - now.getTime(),
+        constantFollowUp: constantFollowUpTime.getTime() - now.getTime(),
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalIdRef.current);
+  }, [caseData]); // Solo depende de caseData
 
   // Función para formatear el tiempo restante
   const formatTimeLeft = (milliseconds) => {
