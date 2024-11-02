@@ -4,18 +4,26 @@
   background-color: #252525;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
   height: 100%;
   padding: .5rem 0 1rem;
 }
 
-#body h1 {
-  text-align: center;
+#body nav {
   background-color: #024CAA;
-  color: white;
+  width: 100%;
   padding: .5rem 0;
-  font-size: 2em;
+  margin-bottom: .5rem;
   border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+}
+
+#body nav h1 {
+  font-size: 2em;
+  color: white;
+  width: 100%;
   /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
 }
 

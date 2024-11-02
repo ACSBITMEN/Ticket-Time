@@ -85,7 +85,8 @@
   justify-content: center;
 }
 
-.ContainerTimer button {
+.ContainerTimer .btn-reset {
+  background-color: #ccc;
   border-radius: 5px;
 }
 
@@ -147,20 +148,77 @@
   min-width: 165px;
 }
 
-.statusEnd {
+.actions {
   display: flex;
   align-items: center;
   justify-items: center;
 }
 
-.statusEnd button {
+.actions button {
   border-radius: 5px;
   height: 40px;
   margin-right: .5rem;
 }
 
 
-.statusEnd button:hover {
+.actions button:hover {
   background-color: #d9534f;
   color: #fff;
+}
+
+
+/* Estilos para el modal */
+.modal {
+  background-color: #fff;
+  padding: 2rem;
+  max-width: 400px;
+  margin: auto;
+  border-radius: 5px;
+  position: relative;
+}
+
+/* Asegurarse de que el modal tenga un z-index mayor que Bootstrap */
+.ReactModal__Content h2 {
+  font-size: 1.5em;
+  margin-bottom: 2rem;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-confirm {
+  background-color: #d9534f;
+  color: #fff;
+  padding: .4rem 1rem .5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.btn-confirm:hover {
+  background-color: #cf3d38;
+}
+
+.btn-cancel {
+  background-color: gray;
+  color: #fff;
+  margin-left: 0.5rem;
+  padding: .4rem 1rem .5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.btn-cancel:hover {
+  background-color: rgb(114, 114, 114);
+}
+
+/* Asegurarse de que el modal tenga un z-index mayor que Bootstrap */
+.ReactModal__Overlay {
+  z-index: 1050; /* Mayor que el z-index de Bootstrap modals */
 }

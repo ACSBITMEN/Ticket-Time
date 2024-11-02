@@ -3,10 +3,16 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseItem.css';
-import { calculateFollowUpTimes } from '../utils/timeCalculations';
+import { calculateFollowUpTimes, adjustToNextWorkingHour, addWorkingMinutes, 
+        isWorkingHour } from '../utils/timeCalculations';
 import { format } from 'date-fns-tz';
+import { addMinutes } from 'date-fns';
+import Modal from 'react-modal';
 
-function CaseItem({ caseData }) {
+// Configurar el elemento root para react-modal
+Modal.setAppElement('#root');
+
+function CaseItem({ caseData, removeCase }) { // Añadimos 'removeCase' como prop
   const {
     id, // Asegúrate de que cada caso tiene un 'id' único
     caseNumber,
@@ -35,6 +41,8 @@ function CaseItem({ caseData }) {
     constantFollowUp: false,
   });
 
+  const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
+
   // useRef para guardar el intervalo
   const intervalIdRef = useRef(null);
 
@@ -46,7 +54,18 @@ function CaseItem({ caseData }) {
     }
   }, [id]);
 
+  // Cargar 'staticTimes' desde localStorage al montar el componente
   useEffect(() => {
+    const savedStaticTimes = localStorage.getItem(`staticTimes_${id}`);
+    if (savedStaticTimes) {
+      setStaticTimes(JSON.parse(savedStaticTimes, (key, value) => (key.endsWith('Time') ? new Date(value) : value)));
+    } else {
+      calculateAndSetTimes();
+    }
+  }, [id]);
+
+  // Función para calcular y establecer los tiempos
+  const calculateAndSetTimes = () => {
     const {
       internalFollowUpTime,
       clientFollowUpTime,
@@ -55,15 +74,21 @@ function CaseItem({ caseData }) {
       constantFollowUpTime,
     } = calculateFollowUpTimes(caseData);
 
-    // Guardamos los tiempos estáticos
-    setStaticTimes({
+    const newStaticTimes = {
       internalFollowUpTime,
       clientFollowUpTime,
       closingFollowUpTime,
       caseExpirationTime,
       constantFollowUpTime,
-    });
+    };
 
+    setStaticTimes(newStaticTimes);
+
+    // Guardar 'staticTimes' en localStorage
+    localStorage.setItem(`staticTimes_${id}`, JSON.stringify(newStaticTimes));
+  };
+
+  useEffect(() => {
     // Limpiar intervalo anterior si existe
     if (intervalIdRef.current) {
       clearInterval(intervalIdRef.current);
@@ -76,24 +101,24 @@ function CaseItem({ caseData }) {
       setTimeLeft((prevTimeLeft) => ({
         internalFollowUp: completed.internalFollowUp
           ? prevTimeLeft.internalFollowUp
-          : internalFollowUpTime.getTime() - now.getTime(),
+          : staticTimes.internalFollowUpTime.getTime() - now.getTime(),
         clientFollowUp: completed.clientFollowUp
           ? prevTimeLeft.clientFollowUp
-          : clientFollowUpTime.getTime() - now.getTime(),
+          : staticTimes.clientFollowUpTime.getTime() - now.getTime(),
         closingFollowUp: completed.closingFollowUp
           ? prevTimeLeft.closingFollowUp
-          : closingFollowUpTime.getTime() - now.getTime(),
+          : staticTimes.closingFollowUpTime.getTime() - now.getTime(),
         caseExpiration: completed.caseExpiration
           ? prevTimeLeft.caseExpiration
-          : caseExpirationTime.getTime() - now.getTime(),
+          : staticTimes.caseExpirationTime.getTime() - now.getTime(),
         constantFollowUp: completed.constantFollowUp
           ? prevTimeLeft.constantFollowUp
-          : constantFollowUpTime.getTime() - now.getTime(),
+          : staticTimes.constantFollowUpTime.getTime() - now.getTime(),
       }));
     }, 1000);
 
     return () => clearInterval(intervalIdRef.current);
-  }, [caseData, completed]);
+  }, [staticTimes, completed]);
 
   // Función para formatear el tiempo restante
   const formatTimeLeft = (milliseconds, isCompleted) => {
@@ -107,7 +132,7 @@ function CaseItem({ caseData }) {
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
-    return `' ${hours}h ${minutes}m '`;
+    return `'${hours}h ${minutes}m'`;
   };
 
   // Función para formatear las fechas estáticas
@@ -141,14 +166,64 @@ function CaseItem({ caseData }) {
     }
   };
 
+  // Función para manejar el botón "Borrar"
+  const handleDelete = () => {
+    // Eliminar datos del localStorage
+    localStorage.removeItem(`completed_${id}`);
+    localStorage.removeItem(`staticTimes_${id}`);
+    // Llamar a la función 'removeCase' para eliminar el caso de la lista
+    removeCase(id);
+  };
+
+  // Función para manejar el botón "Reiniciar"
+  const handleReset = () => {
+    const now = new Date();
+    let newConstantFollowUpTime;
+
+    if (type === 'Falla') {
+      newConstantFollowUpTime = addMinutes(now, 30);
+    } else if (type === 'Requerimiento') {
+      if (isWorkingHour(now)) {
+        newConstantFollowUpTime = addMinutes(now, 30);
+      } else {
+        const adjustedNow = adjustToNextWorkingHour(now);
+        newConstantFollowUpTime = addWorkingMinutes(adjustedNow, 30);
+      }
+    }
+
+    // Actualizar 'staticTimes' y guardar en localStorage
+    const updatedStaticTimes = {
+      ...staticTimes,
+      constantFollowUpTime: newConstantFollowUpTime,
+    };
+    setStaticTimes(updatedStaticTimes);
+    localStorage.setItem(`staticTimes_${id}`, JSON.stringify(updatedStaticTimes));
+
+    // Reiniciar el estado de 'completed' para 'constantFollowUp'
+    const updatedCompleted = {
+      ...completed,
+      constantFollowUp: false,
+    };
+    setCompleted(updatedCompleted);
+    localStorage.setItem(`completed_${id}`, JSON.stringify(updatedCompleted));
+  };
+
+  // Función para abrir el modal
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Función para cerrar el modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="case-item">
       <div className='case-item-date'>
-        <h5>Ticket <b>#{caseNumber}</b> - {type} </h5>
-        <div className='container-case-item-date'>
-        <p><b>Creación Ticket:</b> {formatDateTime(caseCreationDate)}</p>
+        <h5>Caso {type} #{caseNumber}</h5>
+        <p><b>Creación Caso:</b> {formatDateTime(caseCreationDate)}</p>
         <p><b>Creación Tarea:</b> {formatDateTime(taskCreationDate)}</p>
-        </div>
       </div>
       <div className="timers">
         {/* Seguimiento Interno */}
@@ -183,6 +258,27 @@ function CaseItem({ caseData }) {
           </div>
         </div>
 
+        {/* Seguimiento Constante */}
+        <div className="containerTimerDate">
+          <h5>Seguimiento Constante</h5>
+          <div className="ContainerTimer">
+            <div className='timerStatic'>{formatDateTime(staticTimes.constantFollowUpTime)}</div>
+            <div className={`StatusTimer ${getStatusClass(timeLeft.constantFollowUp, completed.constantFollowUp)}`}>
+              {formatTimeLeft(timeLeft.constantFollowUp, completed.constantFollowUp)}
+              <input
+                type="checkbox"
+                checked={completed.constantFollowUp}
+                onChange={(e) => handleCheckboxChange(e, 'constantFollowUp')}
+              />
+            </div>
+            {type !== 'Especial' && (
+              <button onClick={handleReset} className="btn-reset">
+                Reiniciar
+              </button>
+            )}  
+          </div>
+        </div>
+
         {/* Seguimiento de Cierre */}
         <div className="containerTimerDate">
           <h5>Seguimiento de Tarea Cierre</h5>
@@ -196,23 +292,6 @@ function CaseItem({ caseData }) {
                 onChange={(e) => handleCheckboxChange(e, 'closingFollowUp')}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Seguimiento Constante */}
-        <div className="containerTimerDate">
-          <h5>Seguimiento Constante</h5>
-          <div className="ContainerTimer">
-            <div className='timerStatic'>{formatDateTime(staticTimes.constantFollowUpTime)}</div>
-            <div className={`StatusTimer ${getStatusClass(timeLeft.constantFollowUp, completed.constantFollowUp)}`}>
-              <p>{formatTimeLeft(timeLeft.constantFollowUp, completed.constantFollowUp)}</p>
-              <input
-                type="checkbox"
-                checked={completed.constantFollowUp}
-                onChange={(e) => handleCheckboxChange(e, 'constantFollowUp')}
-              />
-            </div>
-            <button>Reiniciar</button>
           </div>
         </div>
 
@@ -231,10 +310,50 @@ function CaseItem({ caseData }) {
             </div>
           </div>
         </div>
-        <div className='statusEnd'>
-          <button>Borrar</button>
+        {/* Botones "Reiniciar" y "Borrar" */}
+        <div className="actions">
+          <button onClick={openModal} className="btn-delete">
+            Borrar
+          </button>
         </div>
       </div>
+
+      {/* Modal de confirmación */}
+      <Modal
+        isOpen={showModal}
+        onRequestClose={closeModal}
+        contentLabel="Confirmación de Borrado"
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: '#fff',
+            padding: '2rem',
+            borderRadius: '8px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+          },
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+        }}
+      >
+        <h2>¿Quieres borrar el Ticket?</h2>
+        <div className="modal-actions">
+          <button onClick={handleDelete} className="btn-confirm">
+            Borrar Ticket
+          </button>
+          <button onClick={closeModal} className="btn-cancel">
+            Cancelar
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -247,6 +366,7 @@ CaseItem.propTypes = {
     caseCreationTime: PropTypes.number.isRequired,
     taskCreationTime: PropTypes.number.isRequired,
   }).isRequired,
+  removeCase: PropTypes.func.isRequired, // Añadimos 'removeCase' como prop requerido
 };
 
 export default CaseItem;
