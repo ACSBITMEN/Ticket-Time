@@ -7,7 +7,7 @@ function FilterBar({ filterType, setFilterType, sortOption, setSortOption }) {
   return (
     <div className="filter-bar">
       <div className="filter-group">
-        <label htmlFor="filterType">Filtrar por Tipo:</label>
+        <label htmlFor="filterType">Filtrar:</label>
         <select
           id="filterType"
           value={filterType}
@@ -28,8 +28,8 @@ function FilterBar({ filterType, setFilterType, sortOption, setSortOption }) {
           onChange={(e) => setSortOption(e.target.value)}
         >
           <option value="">Selecciona</option>
-          <option value="caseNumberAsc">Número de Caso (Ascendente)</option>
-          <option value="caseNumberDesc">Número de Caso (Descendente)</option>
+          <option value="caseNumberAsc">Número de Ticket (Ascendente)</option>
+          <option value="caseNumberDesc">Número de Ticket (Descendente)</option>
           <option value="creationTimeAsc">Fecha de Creación (Ascendente)</option>
           <option value="creationTimeDesc">Fecha de Creación (Descendente)</option>
         </select>

@@ -1,7 +1,7 @@
 /* src/styles/App.css */
 
 #body > * {
-  background-color: #252525;
+  background-color: #1E3E62;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -11,13 +11,21 @@
 #body nav {
   background-color: #024CAA;
   width: 100%;
-  padding: .5rem 0;
+  padding: .5rem 0 0;
   margin-bottom: .5rem;
+  border: 1px solid #0D92F4;
   border-radius: 5px;
   display: flex;
   flex-direction: row;
   text-align: center;
-  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+#body nav:hover, #body nav:hover .bi-ticket-perforated-fill, #body nav:hover h1 {
+  fill: #08C2FF;
+  color: #08C2FF;
+  background-color: #013c8a;
+  cursor: pointer;
 }
 
 #body nav h1 {
@@ -25,6 +33,28 @@
   color: white;
   width: 100%;
   /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+}
+
+#body nav h1 .bi-ticket-perforated-fill {
+  margin: 0 .5rem 0 .8rem;
+  width: 40px;  /* Nuevo ancho */
+  height: 40px; /* Nueva altura */
+  fill: #fff;
+}
+
+.containerFilters {
+  background-color: #4A628A;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  padding: .5rem .5rem;
+  border-radius: 5px;
+}
+
+.case-list p {
+  color: #fff;
+  text-align: center;
 }
 
 #body .container {

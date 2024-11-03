@@ -4,18 +4,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px 0 15px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: row;
+  margin: 0 .5rem;
 }
 
 .filter-group label {
   margin: 5px 5px;
   font-weight: bold;
   color: #fff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .filter-group select {

@@ -62,6 +62,7 @@ function CaseForm({ addCase }) {
           <div className="form-group">
             <label>Número de Ticket</label>
             <input
+              placeholder="Ingresa #Ticket..."
               type="text"
               className="form-control"
               value={caseNumber}
