@@ -5,7 +5,7 @@ import CaseForm from './components/CaseForm';
 import CaseList from './components/CaseList';
 import FilterBar from './components/FilterBar';
 import SearchBar from './components/SearchBar';
-import PropTypes from 'prop-types'; 
+import CaseStats from './components/CaseStats';
 import './styles/App.css'; // Asegúrate de tener estilos globales si es necesario
 
 function App() {
@@ -93,7 +93,8 @@ function App() {
         </svg>
         </h1>
       </nav>
-      <CaseForm addCase={addCase} />
+      <CaseForm addCase={addCase} existingCases={cases} />
+      <CaseStats cases={cases} setFilterType={setFilterType} />
       <div className='containerFilters'>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <FilterBar

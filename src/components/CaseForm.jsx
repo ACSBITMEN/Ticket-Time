@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import '../styles/CaseForm.css';
 import { parse } from 'date-fns';
 
-function CaseForm({ addCase }) {
+function CaseForm({ addCase, existingCases }) {
   const [caseNumber, setCaseNumber] = useState('');
   const [type, setType] = useState('');
 
@@ -28,6 +28,16 @@ function CaseForm({ addCase }) {
       alert('Por favor, completa todos los campos');
       return;
     }
+
+  // Verificar si el número de caso ya existe
+  const isDuplicate = existingCases.some(
+    (caseItem) => caseItem.caseNumber.toLowerCase() === caseNumber.toLowerCase()
+  );
+
+  if (isDuplicate) {
+    alert('Ticket Duplicado: El Número de Ticket ya existe.');
+    return;
+  }
 
     // Formato de fecha esperado
     const dateFormat = "yyyy-MM-dd'T'HH:mm";
@@ -112,6 +122,11 @@ function CaseForm({ addCase }) {
 // Agrega las PropTypes para validar los props del componente
 CaseForm.propTypes = {
   addCase: PropTypes.func.isRequired,
+  existingCases: PropTypes.arrayOf(
+    PropTypes.shape({
+      caseNumber: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default CaseForm;
