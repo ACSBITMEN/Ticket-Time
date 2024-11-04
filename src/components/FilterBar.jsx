@@ -28,10 +28,10 @@ function FilterBar({ filterType, setFilterType, sortOption, setSortOption }) {
           onChange={(e) => setSortOption(e.target.value)}
         >
           <option value="">Selecciona</option>
-          <option value="caseNumberAsc">Número de Ticket (Ascendente)</option>
-          <option value="caseNumberDesc">Número de Ticket (Descendente)</option>
           <option value="creationTimeAsc">Fecha de Creación (Ascendente)</option>
           <option value="creationTimeDesc">Fecha de Creación (Descendente)</option>
+          <option value="caseNumberAsc">Número de Ticket (Ascendente)</option>
+          <option value="caseNumberDesc">Número de Ticket (Descendente)</option>
         </select>
       </div>
     </div>

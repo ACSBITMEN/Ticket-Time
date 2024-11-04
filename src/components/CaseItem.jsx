@@ -24,6 +24,8 @@ function CaseItem({ caseData, removeCase }) { // Añadimos 'removeCase' como pro
   const caseCreationDate = new Date(caseCreationTime);
   const taskCreationDate = new Date(taskCreationTime);
 
+  const typeClass = type.toLowerCase();
+
   const [timeLeft, setTimeLeft] = useState({});
   const [staticTimes, setStaticTimes] = useState({
     internalFollowUpTime: null,
@@ -221,11 +223,13 @@ function CaseItem({ caseData, removeCase }) { // Añadimos 'removeCase' como pro
   return (
     <div className="case-item">
       <div className='case-item-date'>
-        <h5>Ticket <b>#{caseNumber}</b></h5>
+        <h5>
+          <p className={`type-pop ${typeClass}`}>{type}</p>
+          <b>#{caseNumber}</b>
+        </h5>
         <div>
           <p className='date-pop'><b>Creación Ticket:</b> {formatDateTime(caseCreationDate)}</p>
           <p className='date-pop'><b>Creación Tarea:</b> {formatDateTime(taskCreationDate)}</p>
-          <p className='type-pop'>{type}</p>
         </div>
       </div>
       <div className="timers">

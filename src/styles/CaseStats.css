@@ -9,8 +9,8 @@
 }
 
 .stat-card {
-  background-color: #f8f9fa;
-  color: #1E3E62;
+  background-color: #4A628A;
+  color: #fff;
   border-radius: 8px;
   min-width: 100px;
   height: 70px;
@@ -20,41 +20,55 @@
   cursor: pointer;
 }
 
-.stat-card:nth-child(2) {
-  background-color: #f18d8d;
-}
-
-.stat-card:nth-child(3) {
-  background-color: #CBDCEB;
-}
-
-.stat-card:nth-child(4) {
-  background-color: #FFBD73;
-}
-
-.stat-card:nth-child(5) {
-  background-color: #7ED4AD;
-}
-
-.stat-card:nth-child(6) {
+.stat-card.active:nth-child(1) {
   background-color: #2b2b2b;
-  color: #fff;
   border-color: #c0c0c0;
 }
 
-.stat-card:hover {
-  scale: 1.05;
+.stat-card.active:nth-child(2), .stat-card.active:nth-child(2) h3, .stat-card.active:hover:nth-child(2), .stat-card.active:hover:nth-child(2) h3 {
+  background-color: #ffcccc;
+  color: #a60000;
+}
+
+.stat-card.active:nth-child(3), .stat-card.active:nth-child(3) h3, .stat-card.active:hover:nth-child(3), .stat-card.active:hover:nth-child(3) h3 {
+  background-color: #7ED4AD;
+  color: #006600;
+}
+
+.stat-card.active:nth-child(4), .stat-card.active:nth-child(4) h3, .stat-card.active:hover:nth-child(4), .stat-card.active:hover:nth-child(4) h3 {
+  background-color: #FFBD73;
+  color: #643f14;
+}
+
+.stat-card:hover:nth-child(2), .stat-card:hover:nth-child(2) h3 {
+  color: #ffcccc;
+}
+
+.stat-card:hover:nth-child(3), .stat-card:hover:nth-child(3) h3 {
+  color: #7ED4AD;
+}
+
+.stat-card:hover:nth-child(4), .stat-card:hover:nth-child(4) h3 {
+  color: #FFBD73;
+}
+
+.stat-card.active:hover:nth-child(3), .stat-card.active:nth-child(3) h3 {
+  background-color: #7ED4AD;
+  color: #006600;
 }
 
 .stat-card:hover p {
   scale: 1.2;
-  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 
-.stat-card:hover:nth-child(6) p {
-  scale: 1.2;
-  text-shadow: -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey;
+.stat-card.active h3 {
+  color: #000;
 }
+
+.stat-card.active p {
+  scale: 1.2;
+}
+
 
 .stat-card h3 {
   font-size: .9em;
@@ -62,6 +76,11 @@
   height: 35%;
   font-weight: 700;
   margin: 0;
+  padding-top: .1rem;
+}
+
+.stat-card.active:nth-child(1) h3 {
+  color: white;
 }
 
 .stat-card p {
