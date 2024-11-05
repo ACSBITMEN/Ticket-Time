@@ -4,7 +4,6 @@ import { utcToZonedTime, format } from 'date-fns-tz';
 import {
   addMinutes,
   subMinutes,
-  isAfter,
   setHours,
   setMinutes,
   setSeconds,
@@ -248,31 +247,16 @@ const calculateFollowUpTimes = (caseData) => {
     }
 
   } else if (type === 'Especial') {
-    // Casos "Especiales": no se considera el Horario Hábil
-
+    // Casos "Especiales": se usa el campo de "Seguimiento Programado" como base
+    const scheduledFollowUp = new Date(caseData.scheduledFollowUpTime); // Nuevo campo ingresado por el usuario
+  
     internalFollowUpTime = addMinutes(taskCreationDate, 60);
     clientFollowUpTime = addMinutes(caseCreationDate, 60);
-    caseExpirationTime = addMinutes(caseCreationDate, 1440); // 24 horas
+    caseExpirationTime = addMinutes(scheduledFollowUp, 1440); // 24 horas
     closingFollowUpTime = subMinutes(caseExpirationTime, 40);
-
-    // Seguimiento constante a las 10:00 a.m. y 4:00 p.m. todos los días
-    const now = utcToZonedTime(new Date(), timeZone);
-    let nextFollowUp;
-
-    const today10AM = setHours(setMinutes(setSeconds(setMilliseconds(now, 0), 0), 0), 10);
-    const today4PM = setHours(setMinutes(setSeconds(setMilliseconds(now, 0), 0), 0), 16);
-
-    if (isAfter(today10AM, now)) {
-      nextFollowUp = today10AM;
-    } else if (isAfter(today4PM, now)) {
-      nextFollowUp = today4PM;
-    } else {
-      // Mover al siguiente día a las 10:00 a.m.
-      nextFollowUp = setHours(addDays(now, 1), 10);
-      nextFollowUp = setMinutes(setSeconds(setMilliseconds(nextFollowUp, 0), 0), 0);
-    }
-
-    constantFollowUpTime = nextFollowUp;
+  
+    // Nuevo cálculo para constantFollowUpTime
+    constantFollowUpTime = subMinutes(scheduledFollowUp, 30);
   }
 
   return {

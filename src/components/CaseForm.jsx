@@ -1,5 +1,3 @@
-// src/components/CaseForm.jsx
-
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseForm.css';
@@ -8,7 +6,7 @@ import { parse } from 'date-fns';
 function CaseForm({ addCase, existingCases }) {
   const [caseNumber, setCaseNumber] = useState('');
   const [type, setType] = useState('');
-
+  
   // Función para obtener la fecha y hora actual en formato compatible con datetime-local
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -19,6 +17,7 @@ function CaseForm({ addCase, existingCases }) {
 
   const [caseCreationTime, setCaseCreationTime] = useState(getCurrentDateTime());
   const [taskCreationTime, setTaskCreationTime] = useState(getCurrentDateTime());
+  const [scheduledFollowUp, setScheduledFollowUp] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,15 +28,21 @@ function CaseForm({ addCase, existingCases }) {
       return;
     }
 
-  // Verificar si el número de caso ya existe
-  const isDuplicate = existingCases.some(
-    (caseItem) => caseItem.caseNumber.toLowerCase() === caseNumber.toLowerCase()
-  );
+    // Validar el campo "Seguimiento Programado" solo si el tipo es "Especial"
+    if (type === 'Especial' && !scheduledFollowUp) {
+      alert('Por favor, ingresa una fecha y hora para el Seguimiento Programado');
+      return;
+    }
 
-  if (isDuplicate) {
-    alert('Ticket Duplicado: El Número de Ticket ya existe.');
-    return;
-  }
+    // Verificar si el número de caso ya existe
+    const isDuplicate = existingCases.some(
+      (caseItem) => caseItem.caseNumber.toLowerCase() === caseNumber.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      alert('Ticket Duplicado: El Número de Ticket ya existe.');
+      return;
+    }
 
     // Formato de fecha esperado
     const dateFormat = "yyyy-MM-dd'T'HH:mm";
@@ -45,6 +50,7 @@ function CaseForm({ addCase, existingCases }) {
     // Convertir las fechas ingresadas a objetos Date interpretados como hora local
     const caseCreationDate = parse(caseCreationTime, dateFormat, new Date());
     const taskCreationDate = parse(taskCreationTime, dateFormat, new Date());
+    const scheduledFollowUpDate = scheduledFollowUp ? parse(scheduledFollowUp, dateFormat, new Date()) : null;
 
     const newCase = {
       id: Date.now(),
@@ -52,7 +58,7 @@ function CaseForm({ addCase, existingCases }) {
       type,
       caseCreationTime: caseCreationDate.getTime(),
       taskCreationTime: taskCreationDate.getTime(),
-      // Aquí puedes añadir más propiedades necesarias
+      scheduledFollowUpTime: scheduledFollowUpDate ? scheduledFollowUpDate.getTime() : null, // Solo agregar si está definido
     };
 
     addCase(newCase);
@@ -62,13 +68,13 @@ function CaseForm({ addCase, existingCases }) {
     setType('');
     setCaseCreationTime(getCurrentDateTime());
     setTaskCreationTime(getCurrentDateTime());
+    setScheduledFollowUp('');
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="">
+      <form onSubmit={handleSubmit} className="case-form">
         <div className="containerDates">
-
           <div className="form-group">
             <label>Número de Ticket</label>
             <input
@@ -79,12 +85,18 @@ function CaseForm({ addCase, existingCases }) {
               onChange={(e) => setCaseNumber(e.target.value)}
             />
           </div>
+
           <div className="form-group">
             <label>Tipo</label>
             <select
               className="form-control"
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => {
+                setType(e.target.value);
+                if (e.target.value !== 'Especial') {
+                  setScheduledFollowUp(''); // Limpiar el campo si no es "Especial"
+                }
+              }}
             >
               <option value="">Selecciona el tipo</option>
               <option value="Requerimiento">Requerimiento</option>
@@ -92,6 +104,7 @@ function CaseForm({ addCase, existingCases }) {
               <option value="Falla">Falla</option>
             </select>
           </div>
+
           <div className="form-group">
             <label>Hora de Creación del Caso</label>
             <input
@@ -101,6 +114,7 @@ function CaseForm({ addCase, existingCases }) {
               onChange={(e) => setCaseCreationTime(e.target.value)}
             />
           </div>
+
           <div className="form-group">
             <label>Hora de Creación de la Tarea</label>
             <input
@@ -110,7 +124,23 @@ function CaseForm({ addCase, existingCases }) {
               onChange={(e) => setTaskCreationTime(e.target.value)}
             />
           </div>
+
+          {type === 'Especial' && (
+            <div className="form-group">
+              <label htmlFor="scheduledFollowUp">Seguimiento Programado</label>
+              <input
+                type="datetime-local"
+                id="scheduledFollowUp"
+                name="scheduledFollowUp"
+                className="form-control"
+                value={scheduledFollowUp}
+                onChange={(e) => setScheduledFollowUp(e.target.value)}
+                required={type === 'Especial'} // Hacer que sea obligatorio solo si el tipo es "Especial"
+              />
+            </div>
+          )}
         </div>
+        
         <button type="submit" className="btn btn-primary mt-3">
           Agregar Ticket
         </button>
