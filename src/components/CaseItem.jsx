@@ -1,14 +1,16 @@
+// src/components/CaseItem.jsx
+
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseItem.css';
 import { calculateFollowUpTimes, adjustToNextWorkingHour, addWorkingMinutes, isWorkingHour } from '../utils/timeCalculations';
 import { format } from 'date-fns-tz';
-import { addMinutes } from 'date-fns';
+import { addMinutes, subMinutes } from 'date-fns';
 import CaseInfo from './CaseInfo';
 import TimerSection from './TimerSection';
 import ActionsModal from './ActionsModal';
 
-function CaseItem({ caseData, removeCase }) {
+function CaseItem({ caseData, removeCase, updateCase }) {
   const { id, caseNumber, type, caseCreationTime, taskCreationTime } = caseData;
 
   const caseCreationDate = new Date(caseCreationTime);
@@ -32,7 +34,13 @@ function CaseItem({ caseData, removeCase }) {
   });
 
   const [showModal, setShowModal] = useState(false);
+  const [modalAction, setModalAction] = useState('');
+  const [scheduledFollowUp, setScheduledFollowUp] = useState(
+    caseData.scheduledFollowUpTime ? new Date(caseData.scheduledFollowUpTime).toISOString().slice(0, 16) : ''
+  );
+  
   const intervalIdRef = useRef(null);
+
 
   useEffect(() => {
     const savedCompleted = localStorage.getItem(`completed_${id}`);
@@ -122,39 +130,90 @@ function CaseItem({ caseData, removeCase }) {
   const handleReset = () => {
     const now = new Date();
     let newConstantFollowUpTime;
+    const scheduledFollowUp = caseData.scheduledFollowUpTime ? new Date(caseData.scheduledFollowUpTime) : null;
   
-    if (type === 'Falla') {
-      newConstantFollowUpTime = addMinutes(now, 30);
-    } else if (type === 'Requerimiento') {
-      if (isWorkingHour(now)) {
-        newConstantFollowUpTime = addMinutes(now, 30);
+    if (scheduledFollowUp) {
+      // Casos con scheduledFollowUp
+      if (now < scheduledFollowUp) {
+        // Antes de la fecha programada
+        newConstantFollowUpTime = subMinutes(scheduledFollowUp, 30);
       } else {
-        const adjustedNow = adjustToNextWorkingHour(now);
-        newConstantFollowUpTime = addWorkingMinutes(adjustedNow, 30);
+        // Después de la fecha programada
+        newConstantFollowUpTime = addMinutes(now, 30);
+      }
+    } else {
+      // Casos sin scheduledFollowUp
+      if (type === 'Requerimiento') {
+        if (isWorkingHour(now)) {
+          // Dentro del horario hábil
+          newConstantFollowUpTime = addMinutes(now, 30);
+        } else {
+          // Fuera del horario hábil, ajustar al siguiente horario hábil
+          const adjustedNow = adjustToNextWorkingHour(now);
+          newConstantFollowUpTime = addWorkingMinutes(adjustedNow, 30);
+        }
+      } else if (type === 'Falla') {
+        // Para "Falla", siempre es ahora + 30 minutos
+        newConstantFollowUpTime = addMinutes(now, 30);
       }
     }
   
-    if (newConstantFollowUpTime) { // Verifica que newConstantFollowUpTime no sea undefined
-      const updatedStaticTimes = {
+    if (newConstantFollowUpTime) {
+      setStaticTimes((prev) => ({
+        ...prev,
+        constantFollowUpTime: newConstantFollowUpTime,
+      }));
+      localStorage.setItem(`staticTimes_${id}`, JSON.stringify({
         ...staticTimes,
         constantFollowUpTime: newConstantFollowUpTime,
-      };
-      setStaticTimes(updatedStaticTimes);
-      localStorage.setItem(`staticTimes_${id}`, JSON.stringify(updatedStaticTimes));
+      }));
   
-      const updatedCompleted = {
+      setCompleted((prev) => ({
+        ...prev,
+        constantFollowUp: false,
+      }));
+      localStorage.setItem(`completed_${id}`, JSON.stringify({
         ...completed,
         constantFollowUp: false,
-      };
-      setCompleted(updatedCompleted);
-      localStorage.setItem(`completed_${id}`, JSON.stringify(updatedCompleted));
+      }));
     } else {
       console.warn('No se pudo actualizar el tiempo de seguimiento constante');
     }
   };
   
 
-  const openModal = () => setShowModal(true);
+  const handleReprogram = () => {
+    if (scheduledFollowUp) {
+      const scheduledFollowUpDate = new Date(scheduledFollowUp);
+      const now = new Date();
+  
+      // Validación para asegurarse de que scheduledFollowUp sea una fecha futura
+      if (scheduledFollowUpDate <= now) {
+        alert("Por favor selecciona una fecha futura para el seguimiento programado.");
+        return; // Salir de la función si la fecha es en el pasado
+      }
+  
+      if (!isNaN(scheduledFollowUpDate.getTime())) {
+        const updatedCaseData = {
+          ...caseData,
+          scheduledFollowUpTime: scheduledFollowUpDate.getTime(),
+        };
+  
+        // Asegúrate de que `updateCase` esté definido antes de llamarlo
+        if (typeof updateCase === 'function') {
+          updateCase(updatedCaseData);
+        }
+      }
+    }
+    closeModal();
+  };
+
+  
+
+  const openModal = (action) => {
+    setModalAction(action);
+    setShowModal(true);
+  };
   const closeModal = () => setShowModal(false);
 
   return (
@@ -164,6 +223,7 @@ function CaseItem({ caseData, removeCase }) {
         caseNumber={caseNumber}
         caseCreationDate={caseCreationDate}
         taskCreationDate={taskCreationDate}
+        scheduledFollowUp={scheduledFollowUp}
         formatDateTime={formatDateTime}
       />
 
@@ -221,14 +281,18 @@ function CaseItem({ caseData, removeCase }) {
         />
 
         <div className="actions">
-          <button onClick={openModal} className="btn-delete">Borrar</button>
+          <button onClick={() => openModal('delete')} className="btn-delete">Borrar</button>
+          <button onClick={() => openModal('reprogram')} className="btn-frezzer">Reprogramar</button>
         </div>
       </div>
 
       <ActionsModal
         isOpen={showModal}
         onRequestClose={closeModal}
-        onDelete={handleDelete}
+        onConfirm={modalAction === 'delete' ? handleDelete : handleReprogram}
+        actionType={modalAction}
+        scheduledFollowUp={scheduledFollowUp}
+        setScheduledFollowUp={setScheduledFollowUp}
       />
     </div>
   );
@@ -241,8 +305,10 @@ CaseItem.propTypes = {
     type: PropTypes.string.isRequired,
     caseCreationTime: PropTypes.number.isRequired,
     taskCreationTime: PropTypes.number.isRequired,
+    scheduledFollowUpTime: PropTypes.number,
   }).isRequired,
   removeCase: PropTypes.func.isRequired,
+  updateCase: PropTypes.func.isRequired,
 };
 
 export default CaseItem;

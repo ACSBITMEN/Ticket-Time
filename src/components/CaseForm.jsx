@@ -1,3 +1,5 @@
+// src/components/CaseForm.jsx
+
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/CaseForm.css';
@@ -68,7 +70,7 @@ function CaseForm({ addCase, existingCases }) {
     setType('');
     setCaseCreationTime(getCurrentDateTime());
     setTaskCreationTime(getCurrentDateTime());
-    setScheduledFollowUp('');
+    setScheduledFollowUp(getCurrentDateTime());
   };
 
   return (
@@ -100,7 +102,7 @@ function CaseForm({ addCase, existingCases }) {
             >
               <option value="">Selecciona el tipo</option>
               <option value="Requerimiento">Requerimiento</option>
-              <option value="Especial">Especial</option>
+              <option value="Especial">Cambio</option>
               <option value="Falla">Falla</option>
             </select>
           </div>
@@ -127,7 +129,7 @@ function CaseForm({ addCase, existingCases }) {
 
           {type === 'Especial' && (
             <div className="form-group">
-              <label htmlFor="scheduledFollowUp">Seguimiento Programado</label>
+              <label htmlFor="scheduledFollowUp">Tiempo Programado</label>
               <input
                 type="datetime-local"
                 id="scheduledFollowUp"

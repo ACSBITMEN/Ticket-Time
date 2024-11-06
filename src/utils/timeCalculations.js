@@ -24,7 +24,24 @@ const businessEndHour = 17; // 5 p.m.
  */
 const holidays = [
   '2024-11-04', // 4 de noviembre de 2024
+  '2024-11-11', // 11 de noviembre de 2024
   '2024-12-25', // 25 de diciembre de 2024
+  '2025-01-01', // 1 de Enero de 2025
+  '2025-01-06', // 06 de Enero de 2025
+  '2025-03-24', // 24 de Marzo de 2025
+  '2025-04-17', // 17 de Abril de 2025
+  '2025-04-18', // 28 de Abril de 2025
+  '2025-06-23', // 23 de Junio de 2025
+  '2025-06-30', // 23 de Junio de 2025
+  '2025-08-07', // 7 de Agosto de 2025
+  '2025-08-18', // 18 de Agosto de 2025
+  '2025-10-13', // 13 de Octubre de 2025
+  '2025-11-03', // 3 de noviembre de 2025
+  '2025-11-17', // 17 de noviembre de 2025
+  '2025-12-8', // 8 de diciembre de 2024
+  '2025-12-25', // 25 de diciembre de 2024
+  '2026-01-01', // 1 de Enero de 2026
+  '2026-01-12', // 12 de Enero de 2026
   // Añade más fechas según corresponda
 ];
 
@@ -71,21 +88,36 @@ const isWorkingHour = (date) => {
 const adjustToNextWorkingHour = (date) => {
   let adjustedDate = new Date(date);
 
-  // Si ya está dentro del Horario Hábil, no ajustar
+  // Si la fecha está dentro del horario hábil, no ajustar
   if (isWorkingHour(adjustedDate)) {
     return adjustedDate;
   }
 
-  // Mover al siguiente día hábil a las 8:00 a.m.
-  adjustedDate = addDays(adjustedDate, 1);
-  adjustedDate = setHours(adjustedDate, businessStartHour);
-  adjustedDate = setMinutes(adjustedDate, 0);
-  adjustedDate = setSeconds(adjustedDate, 0);
-  adjustedDate = setMilliseconds(adjustedDate, 0);
+  // Ajuste para el mismo día a las 8:00 a.m. si la hora es anterior
+  const startOfBusinessDay = setHours(adjustedDate, businessStartHour);
+  setMinutes(startOfBusinessDay, 0);
+  setSeconds(startOfBusinessDay, 0);
+  setMilliseconds(startOfBusinessDay, 0);
 
-  // Incrementar días hasta encontrar un día hábil
-  while (!isWorkingHour(adjustedDate)) {
+  if (adjustedDate < startOfBusinessDay) {
+    // Si la hora actual es antes de las 8:00 a.m., ajusta al mismo día a las 8:00 a.m.
+    adjustedDate = startOfBusinessDay;
+  } else {
+    // Mover al siguiente día hábil a las 8:00 a.m.
     adjustedDate = addDays(adjustedDate, 1);
+    adjustedDate = setHours(adjustedDate, businessStartHour);
+    adjustedDate = setMinutes(adjustedDate, 0);
+    adjustedDate = setSeconds(adjustedDate, 0);
+    adjustedDate = setMilliseconds(adjustedDate, 0);
+
+    // Incrementar días hasta encontrar un día hábil
+    while (!isWorkingHour(adjustedDate)) {
+      adjustedDate = addDays(adjustedDate, 1);
+      adjustedDate = setHours(adjustedDate, businessStartHour);
+      adjustedDate = setMinutes(adjustedDate, 0);
+      adjustedDate = setSeconds(adjustedDate, 0);
+      adjustedDate = setMilliseconds(adjustedDate, 0);
+    }
   }
 
   return adjustedDate;
@@ -225,8 +257,7 @@ const calculateFollowUpTimes = (caseData) => {
 
   } else if (type === 'Requerimiento') {
     if (isWorkingHour(caseCreationDate)) {
-      // Ingresó DENTRO del Horario Hábil (no se considera Horario Hábil para los cálculos)
-
+      // Ingresó DENTRO del Horario Hábil
       internalFollowUpTime = addMinutes(taskCreationDate, 60);
       clientFollowUpTime = addMinutes(caseCreationDate, 60);
       caseExpirationTime = addMinutes(caseCreationDate, 240); // 4 horas
@@ -234,8 +265,7 @@ const calculateFollowUpTimes = (caseData) => {
       constantFollowUpTime = addMinutes(caseCreationDate, 30);
 
     } else {
-      // Ingresó FUERA del Horario Hábil (se considera Horario Hábil para los cálculos)
-
+      // Ingresó FUERA del Horario Hábil
       const adjustedCaseCreationDate = adjustToNextWorkingHour(caseCreationDate);
       const adjustedTaskCreationDate = adjustToNextWorkingHour(taskCreationDate);
 
@@ -275,5 +305,5 @@ export {
   calculateFollowUpTimes,
   adjustToNextWorkingHour,
   addWorkingMinutes,
-  isWorkingHour, // Exportamos 'isWorkingHour' correctamente
+  isWorkingHour,
 };

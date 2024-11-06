@@ -6,7 +6,7 @@ import CaseList from './components/CaseList';
 import FilterBar from './components/FilterBar';
 import SearchBar from './components/SearchBar';
 import CaseStats from './components/CaseStats';
-import './styles/App.css'; // Asegúrate de tener estilos globales si es necesario
+import './styles/App.css';
 
 function App() {
   // Función para inicializar los casos desde localStorage
@@ -37,6 +37,16 @@ function App() {
   // Añadir la función removeCase
   const removeCase = (id) => {
     setCases((prevCases) => prevCases.filter((caseItem) => caseItem.id !== id));
+  };
+
+
+  // Función para actualizar un caso específico
+  const updateCase = (updatedCase) => {
+    setCases((prevCases) =>
+      prevCases.map((caseItem) =>
+        caseItem.id === updatedCase.id ? updatedCase : caseItem
+      )
+    );
   };
 
   // Estados para filtrado y ordenamiento
@@ -116,7 +126,11 @@ function App() {
           setSortOption={setSortOption}
         />
       </div>
-      <CaseList cases={displayedCases} removeCase={removeCase} />
+      <CaseList 
+        cases={displayedCases} 
+        removeCase={removeCase}
+        updateCase={updateCase}
+      />
     </div>
   );
 }

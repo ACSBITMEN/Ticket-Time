@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 
-function CaseInfo({ type, caseNumber, caseCreationDate, taskCreationDate, formatDateTime }) {
+function CaseInfo({ type, caseNumber, caseCreationDate, taskCreationDate, scheduledFollowUp, formatDateTime }) {
   const typeClass = type.toLowerCase();
 
   return (
@@ -14,8 +14,11 @@ function CaseInfo({ type, caseNumber, caseCreationDate, taskCreationDate, format
         <b>#{caseNumber}</b>
       </h5>
       <div>
-        <p className='date-pop'><b>Creación Ticket:</b> {formatDateTime(caseCreationDate)}</p>
-        <p className='date-pop'><b>Creación Tarea:</b> {formatDateTime(taskCreationDate)}</p>
+        <p className='date-pop'><b>Ticket:</b> {formatDateTime(caseCreationDate)}</p>
+        <p className='date-pop'><b>Tarea:</b> {formatDateTime(taskCreationDate)}</p>
+        {scheduledFollowUp ? (
+          <p className='date-pop'><b>Programado:</b> {formatDateTime(new Date(scheduledFollowUp))}</p>
+        ) : null}
       </div>
     </div>
   );
@@ -26,7 +29,10 @@ CaseInfo.propTypes = {
   caseNumber: PropTypes.string.isRequired,
   caseCreationDate: PropTypes.instanceOf(Date).isRequired,
   taskCreationDate: PropTypes.instanceOf(Date).isRequired,
+  scheduledFollowUp: PropTypes.instanceOf(Date), // Cambiado a scheduledFollowUp
   formatDateTime: PropTypes.func.isRequired,
 };
 
 export default CaseInfo;
+
+
