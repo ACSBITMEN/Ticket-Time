@@ -137,6 +137,7 @@ function CaseForm({ addCase, existingCases }) {
                 className="form-control"
                 value={scheduledFollowUp}
                 onChange={(e) => setScheduledFollowUp(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
                 required={type === 'Especial'} // Hacer que sea obligatorio solo si el tipo es "Especial"
               />
             </div>

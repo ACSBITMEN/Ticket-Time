@@ -80,4 +80,7 @@
     margin: 0 0;
   }
   
+  .containerTimerDate {
+    flex: 1 1 250px;
+  }
 }

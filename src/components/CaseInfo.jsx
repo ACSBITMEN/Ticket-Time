@@ -1,14 +1,14 @@
 // src/components/CaseInfo.jsx
 
 //Este componente puede manejar la información básica del caso
-
+import '../styles/CaseInfo.css'; 
 import PropTypes from 'prop-types';
 
 function CaseInfo({ type, caseNumber, caseCreationDate, taskCreationDate, scheduledFollowUp, formatDateTime }) {
   const typeClass = type.toLowerCase();
 
   return (
-    <div className="case-item-date">
+    <div className={`case-item-date ${typeClass}`}>
       <h5>
         <p className={`type-pop ${typeClass}`}>{type}</p>
         <b>#{caseNumber}</b>

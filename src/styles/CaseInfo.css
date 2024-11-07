@@ -1,0 +1,92 @@
+.case-item-date {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: .5rem .3rem .4rem;
+  border-radius: 5px 5px 0 0;
+}
+
+.case-item .case-item-date.falla {
+  background-color: #ffcccc;
+  color: #a60000;
+  border: 1px solid #a60000;
+}
+
+.case-item .case-item-date.requerimiento {
+  background-color: #ccffcca2;
+  color: #006600;
+  border: 1px solid #006600;
+}
+
+.case-item .case-item-date.especial {
+  background-color: #ffbe7380;
+  color: #643f14;
+  border: 1px solid #643f14;
+}
+
+.case-item-date .container-case-item-date {
+  display: flex;
+  flex-direction: row;
+}
+
+.case-item .case-item-date div {
+  display: flex;
+  flex-direction: row;
+}
+
+.case-item .case-item-date .date-pop, .case-item .case-item-date .type-pop {
+  background-color: #ffffff5d;
+  color: #000;
+  font-size: 0.8em;
+  margin: 0.2rem 0;
+  padding: 0.2rem 0.8rem;
+  border-radius: 5px;
+}
+
+.case-item .case-item-date .date-pop {
+  margin: 0.2rem .5rem;
+}
+
+.case-item .case-item-date .date-pop:nth-child(3) {
+  background-color: #C6E7FF;
+  color: #516077;
+  border: 1px solid #516077;
+  font-weight: 700;
+}
+
+.case-item .case-item-date .date-pop:nth-child(3) b {
+  font-weight: 700;
+}
+
+.case-item .case-item-date .type-pop {
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 .5rem 0 .5rem;
+}
+
+.case-item .case-item-date .type-pop.falla {
+  background-color: #ffcccc;
+  color: #a60000;
+  border: 1px solid #a60000;
+}
+
+.case-item .case-item-date.falla {
+  background-color: #ffcccc;
+  color: #a60000;
+  border: 1px solid #a60000;
+}
+
+.case-item .case-item-date .type-pop.requerimiento {
+  background-color: #ccffcc;
+  color: #006600;
+  border: 1px solid #006600;
+}
+
+.case-item .case-item-date .type-pop.especial {
+  background-color: #FFBD73;
+  color: #643f14;
+  border: 1px solid #643f14;
+}

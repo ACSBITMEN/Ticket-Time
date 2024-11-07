@@ -1,10 +1,9 @@
 /* src/styles/CaseItem.css */
 
 .case-item {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: .3rem .3rem 0.5rem;
-  margin-bottom: 2rem;
+  background-color: #eeeeeec9;
+  padding: 0 0 .7rem;
+  margin-bottom: 2.5rem;
   border-radius: 5px;
   -webkit-box-shadow: 0px 0px 8px 5px rgba(0,0,0,0.19);
   -moz-box-shadow: 0px 0px 8px 5px rgba(0,0,0,0.19);
@@ -12,80 +11,27 @@
 }
 
 .case-item:hover {
-  background-color: #f8f8f8;
-  border: 1px solid #0D92F4;
+  background-color: #f8f8f8e1;
 }
 
 .case-item h5 {
-  margin: 0 2rem 0 1rem;
-  font-size: 1.2em;
+  margin: 0;
+  font-size: clamp(.5em, 1rem + 3vw, 1.1rem);
   font-weight: 400;
+  position: relative;
 }
 
-.case-item-date {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+.case-item input[type="checkbox"] {
+  margin-left: 0.5rem;
+  width: 21px;
+  height: 21px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
 }
 
-.case-item-date .container-case-item-date {
-  display: flex;
-  flex-direction: row;
-}
-
-.case-item .case-item-date div {
-  display: flex;
-  flex-direction: row;
-}
-
-.case-item .case-item-date .date-pop, .case-item .case-item-date .type-pop {
-  background-color: gainsboro;
-  color: #000;
-  font-size: 0.9em;
-  margin: 0.2rem 0;
-  padding: 0.2rem 0.8rem;
-  border-radius: 5px;
-}
-
-.case-item .case-item-date .date-pop {
-  margin: 0.2rem .5rem;
-}
-
-.case-item .case-item-date .date-pop:nth-child(3) {
-  background-color: #C6E7FF;
-  border: 1px solid #C5D3E8;
-}
-
-.case-item .case-item-date .date-pop:nth-child(3) b {
-  font-weight: 600;
-  color: #516077;
-}
-
-.case-item .case-item-date .type-pop {
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: inline-block;
-  margin-right: .5rem;
-}
-
-.case-item .case-item-date .type-pop.falla {
-  background-color: #ffcccc;
-  color: #a60000;
-  border: 1px solid #a60000;
-}
-
-.case-item .case-item-date .type-pop.requerimiento {
-  background-color: #ccffcc;
-  color: #006600;
-  border: 1px solid #006600;
-}
-
-.case-item .case-item-date .type-pop.especial {
-  background-color: #FFBD73;
-  color: #643f14;
-  border: 1px solid #643f14;
+.case-item input[type="checkbox"]:hover {
+  cursor: pointer;
 }
 
 
@@ -97,42 +43,62 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding: .1rem .5rem 0;
 }
 
 .containerTimerDate {
-  background-color: #aaaaaa;
+  background-color: #313131;
   color: #f9f9f9;
   border: 1px solid black;
-  margin: 0.2rem 0.5rem;
-  padding-bottom: .3rem;
+  margin: 0.5rem 0.4rem;
   border-radius: 5px;
-  flex: 1 1 300px;
+  flex: 1 1 150px;
+  font-weight: 500;
 }
 
 .containerTimerDate h5 {
-  color: #000;
-  font-size: 1em;
+  color: #ffffff;
+  font-size: .9em;
   font-weight: 600;
   text-align: center;
-  margin: 0.2rem 0;
+  padding: 2px 0 0 0;
+  height: 30%;
+  white-space: nowrap; /* Evita que el texto haga saltos de línea */
+  overflow: hidden; /* Oculta el texto que no cabe */
+  text-overflow: ellipsis; /* Añade puntos suspensivos al final */
+}
+
+.containerTimerDate:nth-child(3) h5 {
+  padding: 2px 2px 0 0;
+}
+
+
+.containerTimerDate .StatusTimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  min-width: 120px;
+  height: 70%;
+  text-align: center;
+  border-radius: 0 0 5px 5px;
 }
 
 .ContainerTimer {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.ContainerTimer .btn-reset {
-  background-color: #c0cfda;
+.StatusTimer .btn-reset {
+  background-color: #00000005;
   border-radius: 5px;
   font-size: .8rem;
   min-width: 80px;
+  margin-left: .2rem;
 }
 
-.ContainerTimer .btn-reset:hover {
-  background-color: #a8b6c0;
+.StatusTimer .btn-reset:hover {
+  background-color: #00000020;
 }
 
 .timerStatic {
@@ -143,52 +109,28 @@
   text-align: center;
   border-radius: 5px;
   padding: 0.2rem;
-  margin: .2rem .2rem;
-}
-
-.StatusTimer {
-  display: flex;
-  align-items: center;
-  font-size: 1em;
-  min-width: 120px;
-  text-align: center;
-  border-radius: 5px;
-  padding: 0.2rem;
-}
-
-.StatusTimer p {
-  width: 85%;
-  text-align: center;
+  margin: .2rem .2rem .4rem;
 }
 
 
-.StatusTimer input[type="checkbox"] {
-  margin-left: 0.5rem;
-  width: 21px;
-  height: 21px;
-}
-
-.StatusTimer input[type="checkbox"]:hover {
-  cursor: pointer;
-}
 
 /* Estilos para los estados */
 .StatusTimer.pending, .StatusTimer.completed, .StatusTimer.expired  {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  padding: .1rem .5rem;
-  margin: 0 .3rem;
+  padding: .3rem .5rem .1rem;
 }
 
 .StatusTimer.pending {
-  background-color: #f0ad4e; /* Amarillo */
+  background-color: #FFBD73; /* Amarillo */
   color: black;
 }
 
 .StatusTimer.completed {
-  background-color: #5cb85c; /* Verde */
-  color: #fff;
+  background-color: #7ED4AD; /* Verde */
+  color: #006600;
+  font-weight: 600;
 }
 
 .StatusTimer.expired {
@@ -197,22 +139,25 @@
   min-width: 165px;
 }
 
+/* Estilos para seccion de botones */
+
 .actions {
   display: flex;
   align-items: center;
-  justify-items: center;
+  justify-content: space-between;
 }
 
 .actions .btn-delete, .actions .btn-frezzer {
   border-radius: 5px;
-  height: 40px;
-  margin-right: .5rem;
+  height: 35px;
+  margin-right: 1rem;
   font-weight: 600;
 }
 
 .actions .btn-delete {
-  background-color: #a0a0a0;
-  color: #ffffff;
+  background-color: #a0a0a0ab;
+  color: #303030;
+  margin-left: 1rem;
 }
 
 

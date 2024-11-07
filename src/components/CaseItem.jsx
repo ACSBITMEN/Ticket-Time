@@ -229,7 +229,7 @@ function CaseItem({ caseData, removeCase, updateCase }) {
 
       <div className="timers">
         <TimerSection
-          title="1er Seguimiento Tarea"
+          title="(1) Seguimiento Tarea"
           staticTime={staticTimes.internalFollowUpTime}
           timeLeft={timeLeft.internalFollowUp}
           completed={completed.internalFollowUp}
@@ -239,11 +239,31 @@ function CaseItem({ caseData, removeCase, updateCase }) {
           getStatusClass={getStatusClass}
         />
         <TimerSection
-          title="1er Avance al Cliente"
+          title="(1) Avance al Cliente"
           staticTime={staticTimes.clientFollowUpTime}
           timeLeft={timeLeft.clientFollowUp}
           completed={completed.clientFollowUp}
           onCheckboxChange={handleCheckboxChange('clientFollowUp')}
+          formatDateTime={formatDateTime}
+          formatTimeLeft={formatTimeLeft}
+          getStatusClass={getStatusClass}
+        />
+        <TimerSection
+          title="Seguimiento de Cierre"
+          staticTime={staticTimes.closingFollowUpTime}
+          timeLeft={timeLeft.closingFollowUp}
+          completed={completed.closingFollowUp}
+          onCheckboxChange={handleCheckboxChange('closingFollowUp')}
+          formatDateTime={formatDateTime}
+          formatTimeLeft={formatTimeLeft}
+          getStatusClass={getStatusClass}
+        />
+        <TimerSection
+          title="Vencimiento Ticket"
+          staticTime={staticTimes.caseExpirationTime}
+          timeLeft={timeLeft.caseExpiration}
+          completed={completed.caseExpiration}
+          onCheckboxChange={handleCheckboxChange('caseExpiration')}
           formatDateTime={formatDateTime}
           formatTimeLeft={formatTimeLeft}
           getStatusClass={getStatusClass}
@@ -259,31 +279,11 @@ function CaseItem({ caseData, removeCase, updateCase }) {
           getStatusClass={getStatusClass}
           onReset={handleReset} // Se pasa handleReset solo a este TimerSection
         />
-        <TimerSection
-          title="Seguimiento de Tarea Cierre"
-          staticTime={staticTimes.closingFollowUpTime}
-          timeLeft={timeLeft.closingFollowUp}
-          completed={completed.closingFollowUp}
-          onCheckboxChange={handleCheckboxChange('closingFollowUp')}
-          formatDateTime={formatDateTime}
-          formatTimeLeft={formatTimeLeft}
-          getStatusClass={getStatusClass}
-        />
-        <TimerSection
-          title="Vencimiento del Caso"
-          staticTime={staticTimes.caseExpirationTime}
-          timeLeft={timeLeft.caseExpiration}
-          completed={completed.caseExpiration}
-          onCheckboxChange={handleCheckboxChange('caseExpiration')}
-          formatDateTime={formatDateTime}
-          formatTimeLeft={formatTimeLeft}
-          getStatusClass={getStatusClass}
-        />
 
-        <div className="actions">
-          <button onClick={() => openModal('delete')} className="btn-delete">Borrar</button>
-          <button onClick={() => openModal('reprogram')} className="btn-frezzer">Reprogramar</button>
-        </div>
+      </div>
+      <div className="actions">
+        <button onClick={() => openModal('delete')} className="btn-delete">Borrar</button>
+        <button onClick={() => openModal('reprogram')} className="btn-frezzer">Reprogramar</button>
       </div>
 
       <ActionsModal
