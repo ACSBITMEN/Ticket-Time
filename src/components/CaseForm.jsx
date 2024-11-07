@@ -108,7 +108,7 @@ function CaseForm({ addCase, existingCases }) {
           </div>
 
           <div className="form-group">
-            <label>Hora de Creación del Caso</label>
+            <label>Hora de Creación del Ticket</label>
             <input
               type="datetime-local"
               className="form-control"
